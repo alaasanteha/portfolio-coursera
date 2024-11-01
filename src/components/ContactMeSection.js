@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, { useEffect } from "react";
 import { useFormik } from "formik";
 import {
   Box,
@@ -15,20 +15,20 @@ import {
 import * as Yup from 'yup';
 import FullScreenSection from "./FullScreenSection";
 import useSubmit from "../hooks/useSubmit";
-import {useAlertContext} from "../context/alertContext";
+import { useAlertContext } from "../context/alertContext";
 
 const LandingSection = () => {
-  const {isLoading, response, submit} = useSubmit();
+  const { isLoading, response, submit } = useSubmit();
   const { onOpen } = useAlertContext();
 
-  const {values ,getFieldProps, resetForm, touched, errors, handleSubmit} = useFormik({
+  const { values, getFieldProps, resetForm, touched, errors, handleSubmit } = useFormik({
     initialValues: {
       firstName: "",
       email: "",
       type: "",
       comment: ""
     },
-    onSubmit: (values) => {     
+    onSubmit: (values) => {
       submit(values);
       onOpen(response.type, response.message)
       if (response.type === 'success') {
@@ -37,9 +37,13 @@ const LandingSection = () => {
     },
     validationSchema: Yup.object({
       firstName: Yup.string().required("Required"),
-      email: Yup.string().required("Required"),
+      email: Yup.string()
+        .email('Invalid email address')
+        .required('Required'),
       type: Yup.string().required("Required"),
-      comment: Yup.string().required("Required"),
+      comment: Yup.string()
+        .min(25, 'Must be at least 25 characters')
+        .required("Required"),
     }),
   });
 
@@ -55,7 +59,7 @@ const LandingSection = () => {
           Contact me
         </Heading>
         <Box p={6} rounded="md" w="100%">
-          <form onSubmit={(e) => {handleSubmit(); e.preventDefault();}}>
+          <form onSubmit={(e) => { handleSubmit(); e.preventDefault(); }}>
             <VStack spacing={4}>
               <FormControl isInvalid={touched.firstName && errors.firstName}>
                 <FormLabel htmlFor="firstName">Name</FormLabel>
@@ -64,7 +68,7 @@ const LandingSection = () => {
                   name="firstName"
                   {...getFieldProps("firstName")}
                 />
-                <FormErrorMessage>First Name is required.</FormErrorMessage>
+                <FormErrorMessage>{errors.firstName}</FormErrorMessage>
               </FormControl>
               <FormControl isInvalid={touched.email && errors.email}>
                 <FormLabel htmlFor="email">Email Address</FormLabel>
@@ -74,7 +78,7 @@ const LandingSection = () => {
                   type="email"
                   {...getFieldProps("email")}
                 />
-                <FormErrorMessage>Email is required.</FormErrorMessage>
+                <FormErrorMessage>{errors.email}</FormErrorMessage>
               </FormControl>
               <FormControl>
                 <FormLabel htmlFor="type">Type of enquiry</FormLabel>
@@ -94,7 +98,7 @@ const LandingSection = () => {
                   height={250}
                   {...getFieldProps("comment")}
                 />
-                <FormErrorMessage>Comment is required</FormErrorMessage>
+                <FormErrorMessage>{errors.comment}</FormErrorMessage>
               </FormControl>
               <Button type="submit" colorScheme="purple" width="full" isLoading={isLoading} loadingText="Submitting" variant="outline">
                 Submit

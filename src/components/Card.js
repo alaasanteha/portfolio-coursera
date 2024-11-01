@@ -14,9 +14,9 @@ const Card = ({ title, description, imageSrc }) => {
       alt=''
       borderRadius='lg'
     />
-    <VStack my='4' ml="3" spacing='2' align="flex-start">
+    <VStack my='5' ml="3" spacing='2' align="flex-start">
       <Heading size='md'>{title}</Heading>
-      <Text color="grey">
+      <Text my='1' color="grey">
          {description}
       </Text>   
     
