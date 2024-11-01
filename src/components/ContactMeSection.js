@@ -21,19 +21,15 @@ const LandingSection = () => {
   const { isLoading, response, submit } = useSubmit();
   const { onOpen } = useAlertContext();
 
-  const { values, getFieldProps, resetForm, touched, errors, handleSubmit } = useFormik({
+  const { getFieldProps, resetForm, touched, errors, handleSubmit } = useFormik({
     initialValues: {
       firstName: "",
       email: "",
-      type: "",
+      type: "hireMe",
       comment: ""
     },
     onSubmit: (values) => {
-      submit(values);
-      onOpen(response.type, response.message)
-      if (response.type === 'success') {
-        resetForm();
-      }
+      submit('https://john.com/contactme', values);
     },
     validationSchema: Yup.object({
       firstName: Yup.string().required("Required"),
@@ -47,6 +43,14 @@ const LandingSection = () => {
     }),
   });
 
+  useEffect(() => {
+    if (response) {
+      onOpen(response.type, response.message);
+      if (response.type === 'success') {
+        resetForm();
+      }
+    }
+  }, [response]);
   return (
     <FullScreenSection
       isDarkBackground

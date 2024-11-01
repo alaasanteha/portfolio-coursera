@@ -31,9 +31,14 @@ const socials = [
     url: "https://stackoverflow.com",
   },
 ];
-
+/** 
+* This component illustrates the use of both the useRef hook and useEffect hook. 
+* The useRef hook is used to create a reference to a DOM element, in order to tweak the header styles and run a transition animation. 
+* The useEffect hook is used to perform a subscription when the component is mounted and to unsubscribe when the component is unmounted. 
+* Additionally, it showcases a neat implementation to smoothly navigate to different sections of the page when clicking on the header elements. 
+*/ 
 const Header = () => {
-    const [scrollDirection, setScrollDirection] = useState(0);
+  const scrollRef = useRef(null); 
   const handleClick = (anchor) => () => {
     const id = `${anchor}-section`;
     const element = document.getElementById(id);
@@ -44,30 +49,28 @@ const Header = () => {
       });
     }
   };
-  const scrollRef = useRef(null);
-    useEffect(() => {
-        let lastScrollY = window.scrollY;
-    const handleScroll = (e) => {
-        let direction = lastScrollY < window.scrollY ? 'down' : 'up';
-        lastScrollY = window.scrollY;
-        setScrollDirection(direction);
-        if (scrollDirection==='down'){
-            scrollRef.current.translateY = -200;
-            scrollRef.current.style.visibility = "hidden";
-        }
-        else{
-            scrollRef.current.translateY = 0;
-            scrollRef.current.style.visibility = "visible";
-        }      
-      
-    };
-
-    window.addEventListener('scroll', handleScroll)
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, [window.scrollY]);
+  
+  useEffect(() => { 
+    let prevScrollPos = window.scrollY;   
+    const handleScroll = () => { 
+      const currentScrollPos = window.scrollY; 
+      const headerElement = scrollRef.current; 
+      if (!headerElement) { 
+        return; 
+      } 
+      if (prevScrollPos > currentScrollPos) { 
+        headerElement.style.transform = "translateY(0)"; 
+      } else { 
+        headerElement.style.transform = "translateY(-200px)"; 
+      } 
+      prevScrollPos = currentScrollPos; 
+    } 
+    window.addEventListener('scroll', handleScroll) 
+  
+    return () => { 
+      window.removeEventListener('scroll', handleScroll) 
+    } 
+  }, []);
 
   return (
     <Box
@@ -91,7 +94,7 @@ const Header = () => {
         >
           <nav>
              <HStack spacing={6}>
-               {socials.map((item,i) => <a href={item.url} key={i} target="_blank"><FontAwesomeIcon icon={item.icon} size="2x" /></a>)}
+               {socials.map((item,i) => <a href={item.url} key={i} target="_blank" rel="noopener noreferrer"><FontAwesomeIcon icon={item.icon} size="2x" /></a>)}
              </HStack>
           </nav>
             
